@@ -12,9 +12,35 @@ export default createGlobalStyle`
         font-size: 62.5%;
     }
 
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: .8rem;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 10px;
+        
+    }
+    
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: red; 
+        border-radius: 10px;
+        background: ${({theme})=> theme.COLORS.GRAY_300};
+        transition: filter 0.2;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        filter: brightness(0.9);
+    }
+
     body{
-        background-color: ${({ theme }) => theme.COLORS.BACKGROUND_900};
-        color: ${({theme}) => theme.COLORS.WHITE};
+        background-color: ${({ theme }) => theme.COLORS.BACKGROUND_800};
+        color: ${({ theme }) => theme.COLORS.WHITE};
         -webkit-font-smoothing: antialiased;
     }
 
@@ -26,10 +52,6 @@ export default createGlobalStyle`
 
     a{
         text-decoration: none;
-    }
-
-    ul{
-        list-style: none;
     }
 
     button, a{
