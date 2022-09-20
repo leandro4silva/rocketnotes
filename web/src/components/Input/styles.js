@@ -11,7 +11,7 @@ export const Container = styled.div`
     border-radius: 1rem;
 
     > svg{
-            margin-left: 1.6rem;
+        margin-left: 1.6rem;
     }
 
     > input{
