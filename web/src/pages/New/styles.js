@@ -22,6 +22,11 @@ export const Form = styled.form`
         grid-area: content;
         overflow-y: auto;
         padding: 6.4rem 0;
+
+        .error{
+        margin-bottom: 1rem;
+        color: red;
+    }
 `
 
 
@@ -41,7 +46,7 @@ export const Content = styled.div`
             color: ${({ theme }) => theme.COLORS.WHITE};
         }
         
-        a{
+        button{
             font-size: 2rem;
             color: ${({ theme }) => theme.COLORS.GRAY_100};
         }

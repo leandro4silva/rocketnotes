@@ -19,9 +19,9 @@ function AuthProvider({ children }){
 
         }catch(error){
             if(error.response){
-                alert(error.response.data.message)
+                return (error.response.data.message)
             }else{
-                alert('Não foi possivel entrar.')
+                return ('Não foi possivel entrar.')
             }
         }
     }
@@ -52,9 +52,9 @@ function AuthProvider({ children }){
 
         }catch(error){
             if(error.response){
-                alert(error.response.data.message)
+                return error.response.data.message
             }else{
-                alert('Não foi possivel realizar o update das informações')
+                return 'Não foi possivel realizar o update das informações'
             }
         }
     }

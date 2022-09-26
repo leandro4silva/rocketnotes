@@ -2,34 +2,32 @@ import { useState, Fragment } from "react";
 
 import { Container, Form, Background, MessageSuccess } from "./styles";
 
+
 import { FiUser, FiMail, FiLock } from 'react-icons/fi'
 
 import { Input } from '../../components/Input'
 import { Button } from '../../components/Button'
 import { Alert } from "../../components/Alert";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { api } from "../../services/api";
+
+import { useForm } from 'react-hook-form'
 
 
 export function SignUp() {
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    
-    const navigate =  useNavigate()
-
-    const [messageError, setMessageError] = useState("")
     const [messageSuccess, setMessageSuccess] = useState("")
+    const [messageError, setMessageError] = useState("")
 
-    function handleSignUp(event) {
-        event.preventDefault()
-        setMessageError("")
+    const {handleSubmit, register, formState: {errors}} = useForm({
+        name: "",
+        email: "",
+        password: ""
+    })
 
-        if (!name || !email || !password) {
-            setMessageError("Preencha todos os campos")
-            return
-        }
+    const onSubmit = (data) => {
+
+        const {name, email, password} = data
 
         api.post("/users", { name, email, password })
             .then(() => {       
@@ -47,7 +45,7 @@ export function SignUp() {
     return (
         <Container>
             <Background />
-            <Form messageSuccess={messageSuccess}>
+            <Form messageSuccess={messageSuccess} onSubmit={handleSubmit(onSubmit)}>
                 <h1>Rocket Notes</h1>
                 <p>Aplicação para salvar e gerenciar seus links úteis.</p>
 
@@ -55,34 +53,39 @@ export function SignUp() {
                     messageSuccess == "" ? 
                     <Fragment>
                         <h2>Crie sua conta</h2>
-                        {
-                            messageError != "" ?
-                            <div className="error">
-                                <Alert message={messageError} isAlert />
-                            </div>
-                            : null
-                        }
+
+                        <p className="error">{messageError ? `* ${messageError}` : null}</p>
+    
                         <Input
                             placeholder="Nome"
                             type="text"
                             icon={FiUser}
-                            onChange={e => setName(e.target.value)}
+                            error={errors.name?.message}
+                            register={register('name', 
+                            {required: 'Informe o seu nome, por favor!'})}
                         />
-        
+                        <p className="error">{errors.name?.message}</p>
                         <Input
                             placeholder="Email"
                             type="text"
                             icon={FiMail}
-                            onChange={e => setEmail(e.target.value)}
+                            error={errors.email?.message}
+                            register={register('email', 
+                            {required: 'Informe o seu email, por favor!'})}
                         />
+                        <p className="error">{errors.email?.message}</p>
         
                         <Input
                             placeholder="Senha"
                             type="password"
+                            error={errors.password?.message}
+                            register={register('password', {required: 'Preencha a senha, por favor!'})}
                             icon={FiLock}
                             onChange={e => setPassword(e.target.value)}
                         />
-                        <Button title="Cadastrar" type="submit" onClick={handleSignUp}></Button>
+
+                        <p className="error">{errors.password?.message}</p>
+                        <Button title="Cadastrar" type="submit"></Button>
                     </Fragment>
                     
                     : 

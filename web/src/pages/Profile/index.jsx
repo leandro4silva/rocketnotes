@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Container, Form, Avatar } from "./styles";
 import {FiArrowLeft, FiUser, FiMail, FiLock, FiCamera} from 'react-icons/fi'
 
@@ -6,14 +8,15 @@ import { useAuth } from '../../hooks/auth'
 
 import avatarPlaceholder from '../../assets/avatar_placeholder.svg'
 
-
+import { ButtonText } from '../../components/ButtonText'
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 
-import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 
 export function Profile(){
+    const navigate = useNavigate()
+
     const { user, updateProfile } = useAuth()
     
     const [name, setName] = useState(user.name)
@@ -27,15 +30,27 @@ export function Profile(){
 
     const [avatarFile, setAvatarFile] = useState()
 
-    function handleUpdate(){
-        const user = {
+    const [messageError, setMessageError] = useState()
+
+    function handleBack(){
+        navigate(-1)
+    }
+
+    async function handleUpdate(){
+        const updated = {
             name,
             email,
             password: newPassword,
             old_password: oldPassword
         }
 
-        updateProfile({user, avatarFile})
+        const userUpdated = Object.assign(user, updated)
+
+        const error = await updateProfile({user: userUpdated, avatarFile})
+
+        if(error){
+            return setMessageError(error)
+        }
     }
 
 
@@ -52,9 +67,8 @@ export function Profile(){
     return(
         <Container>
             <header>
-                <Link to="/">
-                    <FiArrowLeft />
-                </Link>
+                <ButtonText onClick={handleBack} icon={FiArrowLeft}>
+                </ButtonText>
             </header>
 
             <Form>
@@ -65,6 +79,8 @@ export function Profile(){
                         <input id="avatar" type="file" onChange={handleChangeAvatar}/>
                     </label>
                 </Avatar>
+                
+                <p className="error">{messageError ? `* ${messageError}` : null}</p>
 
                 <Input placeholder="Nome" type="text" value={name} onChange={e => setName(e.target.value)} icon={FiUser}></Input>
                 <Input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} icon={FiMail}></Input>

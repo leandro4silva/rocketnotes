@@ -26,8 +26,13 @@ export const Form = styled.form`
     margin: -8.4rem auto;
 
 
-    >div:nth-child(4){
+    >div:nth-child(5){
         margin-top: 2.4rem;
+    }
+
+    .error{
+        margin-bottom: 1rem;
+        color: red;
     }
 `
 

@@ -12,6 +12,8 @@ export const Container = styled.textarea`
 
     margin-bottom: .8rem;
 
+    border: ${({error}) => error ? "1px solid red" : "none"};
+
 
     &::placeholder{
         color: ${({theme}) => theme.COLORS.GRAY_300};;

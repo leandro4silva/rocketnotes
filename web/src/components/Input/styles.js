@@ -7,6 +7,8 @@ export const Container = styled.div`
     background-color: ${({theme})=> theme.COLORS.BACKGROUND_900};
     color: ${({theme})=> theme.COLORS.GRAY_300};
 
+    border: ${({error}) => error ? "1px solid red" : "none"};
+
     margin-bottom: .8rem;
     border-radius: 1rem;
 

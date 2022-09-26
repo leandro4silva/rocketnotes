@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Container, Form, Content } from "./styles";
 
@@ -8,14 +8,14 @@ import { Input } from "../../components/Input";
 import { TextArea } from "../../components/TextArea";
 import { Section } from "../../components/Section";
 import { NoteItem } from "../../components/NoteItem";
-import {Button} from "../../components/Button"
+import { Button } from "../../components/Button"
+import { ButtonText } from "../../components/ButtonText";
 
 import { api } from "../../services/api";
 
-export function New() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+import { useForm } from 'react-hook-form'
 
+export function New() {
     const [links, setLinks] = useState([]);
     const [newLink, setNewLink] = useState('');
 
@@ -24,7 +24,19 @@ export function New() {
 
     const navigate = useNavigate();
 
+    const {register, handleSubmit, formState:{errors}} = useForm({
+        title: "",
+        description: "",
+        links: links,
+        tags: tags
+    })
+
+    const [messageErrorLink, setMessageErrorLink] = useState("")
+    const [messageErrorTag, setMessageErrorTag] = useState("")
+
+
     function handleAddLink(){
+        setMessageErrorLink('')
         if(!newLink){
             alert('Preencha o link');
             return;
@@ -33,7 +45,12 @@ export function New() {
         setNewLink('');
     }
 
+    function handleBack(){
+        navigate(-1)
+    }
+
     function handleAddTag(){
+        setMessageErrorTag('')
         setTags(prevState => [...prevState, newTag]);
         setNewTag('');
     }
@@ -55,20 +72,17 @@ export function New() {
         }))
     }
 
+    const handleNewNote = async (data) => {
 
-    async function handleNewNote(){
-        if(!title){
-            return alert('Digite o titulo da nota')
-        }
-        
+        const {title, description} = data
+
         if(newLink){
-            return alert('Voce deixou um link no campo para adicionar mas não clicou para adicionar. Clique para adicionar ou deixe o campo vazio')
+            return setMessageErrorLink('Voce deixou um link no campo para adicionar mas não clicou para adicionar. Clique para adicionar ou deixe o campo vazio')
         }
 
         if(newTag){
-            return alert('Voce deixou uma tag no campo para adicionar mas não clicou para adicionar. Clique para adicionar ou deixe o campo vazio')
+            return setMessageErrorTag('Voce deixou uma tag no campo para adicionar mas não clicou para adicionar. Clique para adicionar ou deixe o campo vazio')
         }
-
 
         await api.post('/notes', {
             title,
@@ -78,29 +92,40 @@ export function New() {
         })
 
         alert('Nota criada com sucesso')
-        navigate('/')
+        navigate(-1)
     }
 
 
     return (
         <Container>
             <Header></Header>
-            <Form>
+            <Form onSubmit={handleSubmit(handleNewNote)}>
                 <Content>
                     <header>
                         <h1>Criar notas</h1>
-                        <Link to="/">Voltar</Link>
+                        <ButtonText 
+                            title="voltar" 
+                            onClick={handleBack}
+                        ></ButtonText>
                     </header>
 
                     <Input 
                         placeholder="Titulo"
+                        error={errors.title?.message}
                         onChange={e => setTitle(e.target.value)}
+                        register={register('title', {required: 'Informe o titulo da nota, por favor!'})}
                     ></Input>
+
+                    <p className="error">{errors.title?.message}</p>
 
                     <TextArea 
                         placeholder="Observações"
+                        error={errors.description?.message}
                         onChange={e => setDescription(e.target.value)} 
+                        register={register('description', {required: 'Informe o titulo da nota, por favor!'})}
                     />
+
+                    <p className="error">{errors.description?.message}</p>
 
                     <Section title="Links Uteis">
                         {
@@ -119,6 +144,8 @@ export function New() {
                             onChange={e => setNewLink(e.target.value)}
                             onClick={handleAddLink}
                         />
+
+                        <p className="error">{messageErrorLink}</p>
                     </Section>
 
 
@@ -142,9 +169,11 @@ export function New() {
                                 onChange={e => setNewTag(e.target.value)} 
                                 onClick={handleAddTag} 
                             />
+
+                            <p className="error">{messageErrorTag}</p>
                         </div>
                     </Section>
-                    <Button title="Salvar" onClick={handleNewNote}/>
+                    <Button title="Salvar" type="submit"/>
                 </Content>
             </Form>
         </Container>
